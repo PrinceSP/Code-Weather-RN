@@ -1,12 +1,13 @@
-import React,{useState,memo} from "react"
-import {View,Text,StyleSheet,Image,SafeAreaView,TouchableOpacity,Dimensions,ScrollView,FlatList} from 'react-native'
+import React,{useState,useEffect,memo} from "react"
+import {View,Text,Modal,StyleSheet,Image,KeyboardAvoidingView,Platform,Pressable,TextInput,SafeAreaView,TouchableOpacity,Dimensions,ScrollView,FlatList} from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FontAwesome6,AntDesign,Octicons } from '@expo/vector-icons';
 import {LineChart} from "react-native-chart-kit";
 import {useGetData} from '../../custom-hooks'
-import {API_URL, API_KEY} from "@env"
+import {ONECALL_API,GEOLOCATION_API, API_KEY} from "@env"
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const {width,fontScale} = Dimensions.get('window')
+const {width,height,fontScale} = Dimensions.get('window')
 
 const styles = StyleSheet.create({
   container:{height:"100%", backgroundColor : "#121415"},
@@ -17,6 +18,27 @@ const styles = StyleSheet.create({
     width,
     paddingHorizontal: 17,
     backgroundColor: "#121415"
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor:"121415",
+  },
+  modalView: {
+    width,
+    height,
+    backgroundColor: '#121415',
+    borderRadius: 4,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   }
 });
 
@@ -44,9 +66,31 @@ const HourlyWeather = memo(({ item })=>{
   );
 });
 
+async function getStorageData(){
+  try {
+    const getToken = await AsyncStorage.getItem('location');
+    if (getToken !== null) {
+      const token = JSON.parse(getToken);
+      return token;
+    } else {
+      return null; // or handle the case where data is not available
+    }
+  } catch (error) {
+    return null; // or handle the error as appropriate
+  }
+}
+
 const Home = ({navigation})=>{
+  const [modalVisible,setModalVisible] = useState(false)
+  const [searchQuery,setQuery] = useState("")
+  const [coordinates,setCoordinates] = useState({
+    lat:null,
+    lon:null,
+    place:null
+  })
   const insets = useSafeAreaInsets()
-  const currentDatas = useGetData(`${process.env.API_URL}?lat=33.44&lon=-94.04&appid=${process.env.API_KEY}&units=metric`)
+  const currentDatas = useGetData(`${process.env.ONECALL_API}?lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${process.env.API_KEY}&units=metric`)
+  const locationDatas = useGetData(`${process.env.GEOLOCATION_API}?q=${searchQuery}&limit=10&appid=${process.env.API_KEY}`)
 
   const data = {
     labels: ["January", "February", "March", "April", "May", "June"],
@@ -67,12 +111,84 @@ const Home = ({navigation})=>{
     return result
   }
 
+  const setLocationCoor = async (item) => {
+    setCoordinates({...coordinates,lat:item.lat,lon:item.lon,place:item.name+", "+item.state})
+    const value = {
+      lat:item.lat,
+      lon:item.lon,
+      place:item.name+", "+item.state
+    }
+    const jsonValue = JSON.stringify(value); // Stringify the value before storing
+    try {
+      await AsyncStorage.setItem('location', jsonValue);
+      setModalVisible(false)
+    } catch (e) {
+      return e;
+    }
+  }
+
+  useEffect(() => {
+    // Fetch token from AsyncStorage and update coordinates if available
+    const fetchToken = async () => {
+      const token = await getStorageData();
+      if (token) {
+        setCoordinates({
+          lat: token.lat,
+          lon: token.lon,
+          place: token.place,
+        });
+      }
+    };
+
+    fetchToken();
+  }, []);
+
   return(
     <SafeAreaView style={[styles.container,{paddingTop: insets.top}]}>
+      <Modal
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}>
+        <View style={styles.centeredView}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : null}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}
+          >
+            <ScrollView contentContainerStyle={styles.modalView}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <View style={{ width: "90%", flexDirection: 'row', alignItems: 'center', paddingVertical: 6, paddingHorizontal: 8, borderRadius: 20, backgroundColor: "#47484955" }}>
+                  <AntDesign name="search1" size={25} color="#aaa" />
+                  <TextInput
+                    defaultValue={searchQuery}
+                    onChangeText={(value)=>setQuery(value)}
+                    placeholder="Search"
+                    placeholderTextColor="#aaa"
+                    style={{ color:"#fff",width: "90%", fontSize: 18 / fontScale, marginLeft: 10 }}
+                  />
+                </View>
+                <Pressable onPress={() => setModalVisible(!modalVisible)}>
+                  <Text style={{ color: "#fff", fontSize: 18 }}>X</Text>
+                </Pressable>
+              </View>
+              {locationDatas?.length > 0 ? locationDatas?.map((item) =>
+                <View key={item.lat} style={{ height: 50, width: '100%', alignItems:'center',justifyContent:'space-between',flexDirection:'row',padding: 10, borderBottomStyle: "solid", borderBottomColor: "#fff", borderBottomWidth: 1 }}>
+                  <TouchableOpacity style={{alignItems:'center',flexDirection:'row'}} onPress={()=>setLocationCoor(item)}>
+                    <Image source={{ uri: `https://flagsapi.com/${item.country}/flat/64.png` }} style={{ height: 28, width: 28 }} />
+                    <Text style={{color:"#fff",marginLeft:10}}>{`${item.name}, ${item.state}`}</Text>
+                  </TouchableOpacity>
+                  <FontAwesome6 name="star" size={18} color="#ddd"/>
+                </View>) : null
+              }
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </View>
+      </Modal>
       <View style={styles.header}>
-        <TouchableOpacity style={{flexDirection:'row',alignItems:'center'}}>
+        <TouchableOpacity style={{flexDirection:'row',alignItems:'center'}} onPress={()=>setModalVisible(true)}>
           <AntDesign name="search1" size={24} color="#fff" />
-          <Text style={{color:"#fff",marginLeft:2,fontSize:22/fontScale}}>London</Text>
+          <Text style={{color:"#fff",marginLeft:2,fontSize:22/fontScale}}>{coordinates.place}</Text>
         </TouchableOpacity>
         <FontAwesome6 name="sliders" size={24} color="#fff" onPress={()=>navigation.navigate("Settings")}/>
       </View>
@@ -122,12 +238,12 @@ const Home = ({navigation})=>{
           renderItem={({item})=><HourlyWeather item={item}/>}
           keyExtractor={(item) => item.dt.toString()}
           horizontal
-          maxToRenderPerBatch={10}
+          maxToRenderPerBatch={7}
         />
 
         {
           currentDatas?.daily.map((item)=>(
-            <TouchableOpacity style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',borderBottomStyle:"solid",borderBottomWidth:1,borderBottomColor:"#fff",paddingVertical:10}}>
+            <TouchableOpacity key={item.dt} style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',borderBottomStyle:"solid",borderBottomWidth:1,borderBottomColor:"#fff",paddingVertical:10}}>
               <Text style={{color:"#fff",fontSize:16/fontScale}}>{splitDate(item.dt)}</Text>
               <View style={{flexDirection:'row',alignItems:'center'}}>
                 <Text style={{color:"#fff",fontSize:16/fontScale}}>{item.temp.max.toFixed(0)} / {item.temp.min.toFixed(0)} ˚F</Text>
