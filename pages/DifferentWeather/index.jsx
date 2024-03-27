@@ -1,19 +1,12 @@
 import React,{useState} from "react"
 import {View,Text,StyleSheet,SafeAreaView,TouchableOpacity,Dimensions,ScrollView,FlatList,Image} from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { AntDesign } from '@expo/vector-icons';
+import {Header} from '../../components'
 
 const {width,fontScale} = Dimensions.get('window')
 
 const styles = StyleSheet.create({
   container:{height:"100%", backgroundColor : "#121415"},
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width,
-    padding: 21,
-    backgroundColor: "#121415"
-  }
 });
 
 const CloudSkyItem = ({bgOn,title="clear sky",image,onPress}) => {
@@ -25,7 +18,7 @@ const CloudSkyItem = ({bgOn,title="clear sky",image,onPress}) => {
   )
 };
 
-const DifferentWeather = ()=>{
+const DifferentWeather = ({navigation})=>{
   const [weatherCondition,setWeatherCondition] = useState([
     {
       id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
@@ -95,10 +88,7 @@ const DifferentWeather = ()=>{
 
   return(
     <SafeAreaView style={[styles.container,{paddingTop: insets.top}]}>
-      <View style={styles.header}>
-        <AntDesign name="arrowleft" size={26} color="#fff" />
-        <Text style={{color:"#fff",marginLeft:40,fontSize:18/fontScale}}>Different Weather?</Text>
-      </View>
+      <Header navigation={navigation} title="Different weather?"/>
       <ScrollView style={{paddingHorizontal:7,marginTop:37}}>
         <View style={{flexDirection:"row",alignItems:'center',justifyContent:'space-between'}}>
           <Text style={{color:"#fff"}}>What is the sky like?</Text>
