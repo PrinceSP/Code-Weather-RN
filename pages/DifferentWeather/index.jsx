@@ -137,7 +137,6 @@ const DifferentWeather = ({navigation})=>{
     <SafeAreaView style={[styles.container,{paddingTop: insets.top,paddingBottom:20}]}>
       <Header navigation={navigation} title="Different weather?"/>
       <Modal
-
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => {
