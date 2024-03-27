@@ -23,7 +23,6 @@ const Units = ({navigation}) => {
       name:"˚F"
     }
   ])
-
   const [windSpeed,setWindSpeed] = useState([
     {
       isActive:true,
@@ -41,7 +40,55 @@ const Units = ({navigation}) => {
       name:"mph"
     }
   ])
-
+  const [pressure,setPressure] = useState([
+    {
+      isActive:true,
+      type:"hPa",
+      name:"hPa"
+    },
+    {
+      isActive:false,
+      type:"inHg",
+      name:"inHg"
+    }
+  ])
+  const [precipitation,setPrecipitation] = useState([
+    {
+      isActive:true,
+      type:"mm",
+      name:"mm"
+    },
+    {
+      isActive:false,
+      type:"in",
+      name:"in"
+    }
+  ])
+  const [distance,setDistance] = useState([
+    {
+      isActive:true,
+      type:"km",
+      name:"km"
+    },
+    {
+      isActive:false,
+      type:"mi",
+      name:"mi"
+    }
+  ])
+  const [timeFormat,setTimeFormat] = useState([
+    {
+      isActive:true,
+      type:"24h",
+      name:"24-hour"
+    },
+    {
+      isActive:false,
+      type:"12h",
+      name:"12-hour"
+    }
+  ])
+  
   return (
     <SafeAreaView style={[styles.container,{paddingTop: insets.top}]}>
       <Header navigation={navigation} title="Units"/>
@@ -57,50 +104,22 @@ const Units = ({navigation}) => {
 
       <View style={{marginTop:12,paddingHorizontal:6,paddingVertical:10,borderBottomWidth:1,borderBottomColor:"#ccc",borderBottomStyle:"solid",alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
         <Text style={{color:"#ccc",fontSize:16/fontScale}}>Pressure</Text>
-          <View style={{width:'50%',flexDirection:'row',padding:4,borderRadius:6,backgroundColor:"rgba(100, 100, 100, 0.16)"}}>
-            <TouchableOpacity style={{width:'50%',paddingVertical:2,alignItems:'center',justifyContent:'center',backgroundColor:"#77777755",borderRadius:3}}>
-              <Text style={{color:"#ccc",fontSize:14/fontScale}}>hPa</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={{width:'50%',paddingVertical:2,alignItems:'center',justifyContent:'center',backgroundColor:"#77777755",borderRadius:3}}>
-              <Text style={{color:"#ccc",fontSize:14/fontScale}}>inHg</Text>
-            </TouchableOpacity>
-          </View>
+        <CustomUnits width="50%" data={pressure} setData={setPressure}/>
       </View>
 
       <View style={{marginTop:12,paddingHorizontal:6,paddingVertical:10,borderBottomWidth:1,borderBottomColor:"#ccc",borderBottomStyle:"solid",alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
         <Text style={{color:"#ccc",fontSize:16/fontScale}}>Precipitation</Text>
-          <View style={{width:'50%',flexDirection:'row',padding:4,borderRadius:6,backgroundColor:"rgba(100, 100, 100, 0.16)"}}>
-            <TouchableOpacity style={{width:'50%',paddingVertical:2,alignItems:'center',justifyContent:'center',backgroundColor:"#77777755",borderRadius:3}}>
-              <Text style={{color:"#ccc",fontSize:14/fontScale}}>hPa</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={{width:'50%',paddingVertical:2,alignItems:'center',justifyContent:'center',backgroundColor:"#77777755",borderRadius:3}}>
-              <Text style={{color:"#ccc",fontSize:14/fontScale}}>inHg</Text>
-            </TouchableOpacity>
-          </View>
+        <CustomUnits width="50%" data={precipitation} setData={setPrecipitation}/>
       </View>
 
       <View style={{marginTop:12,paddingHorizontal:6,paddingVertical:10,borderBottomWidth:1,borderBottomColor:"#ccc",borderBottomStyle:"solid",alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
         <Text style={{color:"#ccc",fontSize:16/fontScale}}>Distance</Text>
-          <View style={{width:'50%',flexDirection:'row',padding:4,borderRadius:6,backgroundColor:"rgba(100, 100, 100, 0.16)"}}>
-            <TouchableOpacity style={{width:'50%',paddingVertical:2,alignItems:'center',justifyContent:'center',backgroundColor:"#77777755",borderRadius:3}}>
-              <Text style={{color:"#ccc",fontSize:14/fontScale}}>km</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={{width:'50%',paddingVertical:2,alignItems:'center',justifyContent:'center',backgroundColor:"#77777755",borderRadius:3}}>
-              <Text style={{color:"#ccc",fontSize:14/fontScale}}>mi</Text>
-            </TouchableOpacity>
-          </View>
+        <CustomUnits width="50%" data={distance} setData={setDistance}/>
       </View>
 
       <View style={{marginTop:12,paddingHorizontal:6,paddingVertical:10,borderBottomWidth:1,borderBottomColor:"#ccc",borderBottomStyle:"solid",alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
-        <Text style={{color:"#ccc",fontSize:16/fontScale}}>Distance</Text>
-          <View style={{width:'50%',flexDirection:'row',padding:4,borderRadius:6,backgroundColor:"rgba(100, 100, 100, 0.16)"}}>
-            <TouchableOpacity style={{width:'50%',paddingVertical:2,alignItems:'center',justifyContent:'center',backgroundColor:"#77777755",borderRadius:3}}>
-              <Text style={{color:"#ccc",fontSize:14/fontScale}}>24-hour</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={{width:'50%',paddingVertical:2,alignItems:'center',justifyContent:'center',backgroundColor:"#77777755",borderRadius:3}}>
-              <Text style={{color:"#ccc",fontSize:14/fontScale}}>12-hour</Text>
-            </TouchableOpacity>
-          </View>
+        <Text style={{color:"#ccc",fontSize:16/fontScale}}>Time format</Text>
+        <CustomUnits width="50%" data={timeFormat} setData={setTimeFormat}/>
       </View>
 
     </SafeAreaView>
