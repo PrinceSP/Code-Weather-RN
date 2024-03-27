@@ -222,6 +222,7 @@ const DifferentWeather = ({navigation})=>{
             defaultValue={email}
             placeholder="Email (optional)"
             placeholderTextColor="#bebebe"
+            inputMode="email"
           />
           <TextInput
             style={[styles.input,{textAlignVertical:'top'}]}
