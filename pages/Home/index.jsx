@@ -28,7 +28,7 @@ const chartConfig = {
   withDots:false
 };
 
-const Home = ()=>{
+const Home = ({navigation})=>{
   const insets = useSafeAreaInsets()
 
   const data = {
@@ -49,7 +49,7 @@ const Home = ()=>{
           <AntDesign name="search1" size={24} color="#fff" />
           <Text style={{color:"#fff",marginLeft:2,fontSize:22/fontScale}}>London</Text>
         </TouchableOpacity>
-        <FontAwesome6 name="sliders" size={24} color="#fff" />
+        <FontAwesome6 name="sliders" size={24} color="#fff" onPress={()=>navigation.navigate("Settings")}/>
       </View>
       <ScrollView style={{paddingHorizontal:7,marginTop:37}}>
         <View style={{alignSelf:'center',alignItems:'center'}}>
