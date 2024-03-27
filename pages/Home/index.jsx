@@ -61,6 +61,12 @@ const Home = ({navigation})=>{
 
   const compassSector = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW", "N"];
 
+  function splitDate(unixTime){
+    const exactDate = new Date(unixTime * 1000);
+    const result = exactDate.toDateString().split(" ").slice(0,-1).join(" ")
+    return result
+  }
+
   return(
     <SafeAreaView style={[styles.container,{paddingTop: insets.top}]}>
       <View style={styles.header}>
@@ -102,7 +108,7 @@ const Home = ({navigation})=>{
         <View style={{flexDirection:'row',flexWrap:"wrap",alignItems:'center',justifyContent:'space-between',backgroundColor:"rgba(60,60,60,0.5)",padding:10,borderRadius:10,marginTop:40}}>
           <Text style={{marginBottom:20,color:"#fff",fontSize:15/fontScale,}}>
             Wind: {currentDatas?.current?.wind_speed}m/s {compassSector[(currentDatas?.current?.wind_deg / 22.5).toFixed(0)]}
-            <FontAwesome6 name="location-arrow" size={18} color="#aaa" style={{transform: [{rotate: `${currentDatas?.current?.wind_deg}deg`}]}}/>
+            {` `}<FontAwesome6 name="location-arrow" size={18} color="#aaa" style={{transform: [{rotate: `${currentDatas?.current?.wind_deg}deg`}]}}/>
           </Text>
           <Text style={{marginBottom:20,color:"#fff",fontSize:15/fontScale,}}>Humidity: {currentDatas?.current?.humidity}%</Text>
           <Text style={{marginBottom:20,color:"#fff",fontSize:15/fontScale,}}>UV index: {currentDatas?.current?.uvi}</Text>
@@ -122,7 +128,7 @@ const Home = ({navigation})=>{
         {
           currentDatas?.daily.map((item)=>(
             <TouchableOpacity style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',borderBottomStyle:"solid",borderBottomWidth:1,borderBottomColor:"#fff",paddingVertical:10}}>
-              <Text style={{color:"#fff",fontSize:16/fontScale}}>Wed Mar 27</Text>
+              <Text style={{color:"#fff",fontSize:16/fontScale}}>{splitDate(item.dt)}</Text>
               <View style={{flexDirection:'row',alignItems:'center'}}>
                 <Text style={{color:"#fff",fontSize:16/fontScale}}>{item.temp.max.toFixed(0)} / {item.temp.min.toFixed(0)} ˚F</Text>
                 <Image source={{ uri: `https://openweathermap.org/img/wn/${item.weather[0].icon}.png` }} style={{ width: 38, height: 38, marginLeft:5,marginRight:10 }} />
