@@ -28,7 +28,7 @@ const Settings = ({navigation}) => {
           <Text style={{color:"#ccc",fontSize:16/fontScale}}>Different weather?</Text>
           <Octicons name="chevron-right" size={28} color="#ccc" />
         </TouchableOpacity>
-        <TouchableOpacity style={{paddingHorizontal:6,paddingVertical:10,borderBottomWidth:1,borderBottomColor:"#ccc",borderBottomStyle:"solid",alignItems:'center',justifyContent:'space-between',flexDirection:'row'}}>
+        <TouchableOpacity style={{paddingHorizontal:6,paddingVertical:10,borderBottomWidth:1,borderBottomColor:"#ccc",borderBottomStyle:"solid",alignItems:'center',justifyContent:'space-between',flexDirection:'row'}} onPress={()=>navigation.navigate("Units")}>
           <Text style={{color:"#ccc",fontSize:16/fontScale}}>Customize units</Text>
           <Octicons name="chevron-right" size={28} color="#ccc" />
         </TouchableOpacity>
