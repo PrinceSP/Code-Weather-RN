@@ -7,7 +7,7 @@ import {LineChart} from "react-native-chart-kit";
 const {width,fontScale} = Dimensions.get('window')
 
 const styles = StyleSheet.create({
-  container:{height:"100%", backgroundColor : "#121415"},
+  container:{flex:1, backgroundColor : "#121415"},
   header: {
     flexDirection: 'row',
     alignItems: 'center',
