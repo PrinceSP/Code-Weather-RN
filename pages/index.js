@@ -1,4 +1,4 @@
 import Home from './Home'
 import Settings from './Settings'
-
-export {Home,Settings}
+import DifferentWeather from './DifferentWeather'
+export {Home,Settings,DifferentWeather}
