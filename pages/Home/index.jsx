@@ -3,13 +3,12 @@ import {View,Text,Modal,StyleSheet,Image,KeyboardAvoidingView,Platform,Pressable
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FontAwesome6,AntDesign,Octicons } from '@expo/vector-icons';
 import {LineChart} from "react-native-chart-kit";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector } from 'react-redux';
 import {ONECALL_API,GEOLOCATION_API, API_KEY} from "@env"
 import {useGetData} from '../../custom-hooks'
-import {splitDate,dailyChartdata} from '../../functions'
+import {splitDate,dailyChartdata,getStorageData} from '../../functions'
 import {data,compassSector,chartConfig} from '../../configs'
-import {HourlyWeather,LocationPlace,SearchHeader} from '../../components'
+import {HourlyWeather,LocationPlace,SearchHeader,CurrentTemperature,CurrentTempStats,PrecipitationGraph} from '../../components'
 
 const {width,height,fontScale} = Dimensions.get('window')
 
@@ -45,20 +44,6 @@ const styles = StyleSheet.create({
     elevation: 5,
   }
 });
-
-async function getStorageData(){
-  try {
-    const getToken = await AsyncStorage.getItem('location');
-    if (getToken !== null) {
-      const token = JSON.parse(getToken);
-      return token;
-    } else {
-      return null; // or handle the case where data is not available
-    }
-  } catch (error) {
-    return null; // or handle the error as appropriate
-  }
-}
 
 const Home = ({navigation})=>{
   const unitDatas = useSelector(state => state.units);
@@ -112,7 +97,7 @@ const Home = ({navigation})=>{
             keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}
           >
             <ScrollView contentContainerStyle={styles.modalView}>
-              <SearchHeader updateModal={()=>setModalVisible(true)} updateQuery={(newQuery)=>setQuery(newQuery)}/>
+              <SearchHeader updateModal={toggleModalVisible} updateQuery={(newQuery)=>setQuery(newQuery)}/>
               {
                 locationDatas?.length > 0 ? locationDatas?.map((item,index) =>
                 <LocationPlace
@@ -135,46 +120,9 @@ const Home = ({navigation})=>{
         <FontAwesome6 name="sliders" size={24} color="#fff" onPress={()=>navigation.navigate("Settings")}/>
       </View>
       <ScrollView style={{paddingHorizontal:7,marginTop:37,paddingBottom:100}}>
-        <View style={{alignSelf:'center',alignItems:'center'}}>
-          <View style={{flexDirection:'row'}}>
-            <Image source={{uri:`https://openweathermap.org/img/wn/${currentDatas?.current?.weather[0].icon}.png`}} style={{width:40,height:40}}/>
-            <View>
-              <Text style={{color:"#fff"}}>{currentDatas?.current?.weather[0]?.main}</Text>
-              <Text style={{color:"#505050"}}>{currentDatas?.current?.weather[0]?.description}</Text>
-            </View>
-          </View>
-          <Text style={{fontSize:80/fontScale,color:"#fff"}}>{currentDatas?.current?.temp.toFixed(0)}{unitDatas.temperature==="metric" ? "˚C" : "˚F"}</Text>
-          <Text style={{color:"#505050"}}>Feels like {currentDatas?.current?.feels_like.toFixed(0)}{unitDatas.temperature==="metric" ? "˚C" : "˚F"}</Text>
-        </View>
-
-        <View style={{width,alignItems:'center',marginTop:50}}>
-          <Text style={{marginBottom:20,color:"#fff",fontSize:16/fontScale,}}>No precipitation within an hour</Text>
-          <LineChart
-            yLabelsOffset={-20}
-            yAxisSuffix="mm/h"
-            style={{fontSize:10/fontScale}}
-            data={data}
-            width={width}
-            height={160}
-            fromZero={true}
-            withVerticalLabels={true}
-            chartConfig={chartConfig}
-            bezier
-          />
-        </View>
-
-        <View style={{flexDirection:'row',flexWrap:"wrap",alignItems:'center',justifyContent:'space-between',backgroundColor:"rgba(60,60,60,0.5)",padding:10,borderRadius:10,marginTop:40}}>
-          <Text style={{marginBottom:20,color:"#fff",fontSize:15/fontScale,}}>
-            Wind: {currentDatas?.current?.wind_speed}m/s {compassSector[(currentDatas?.current?.wind_deg / 22.5).toFixed(0)]}
-            {` `}<FontAwesome6 name="location-arrow" size={18} color="#aaa" style={{transform: [{rotate: `${currentDatas?.current?.wind_deg}deg`}]}}/>
-          </Text>
-          <Text style={{marginBottom:20,color:"#fff",fontSize:15/fontScale,}}>Humidity: {currentDatas?.current?.humidity}%</Text>
-          <Text style={{marginBottom:20,color:"#fff",fontSize:15/fontScale,}}>UV index: {currentDatas?.current?.uvi}</Text>
-          <Text style={{marginBottom:20,color:"#fff",fontSize:15/fontScale,}}>Pressure: {currentDatas?.current?.pressure}hPa</Text>
-          <Text style={{marginBottom:20,color:"#fff",fontSize:15/fontScale,}}>Visibility: {currentDatas?.current?.visibility}km</Text>
-          <Text style={{marginBottom:20,color:"#fff",fontSize:15/fontScale,}}>Dew point: {currentDatas?.current?.dew_point}{unitDatas.temperature==="metric" ? "˚C" : "˚F"}</Text>
-        </View>
-
+        <CurrentTemperature currentDatas={currentDatas} unitDatas={unitDatas}/>
+        <PrecipitationGraph/>
+        <CurrentTempStats currentDatas={currentDatas} unitDatas={unitDatas}/>
         <FlatList
           data={currentDatas?.hourly}
           renderItem={({item})=><HourlyWeather item={item} unit={unitDatas.temperature==="metric" ? "˚C" : "˚F"}/>}
@@ -221,43 +169,7 @@ const Home = ({navigation})=>{
               chartConfig={chartConfig}
               bezier
             />
-            <View style={{marginTop:20}}>
-              <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',borderBottomStyle:"solid",borderBottomWidth:1,borderBottomColor:"#fff",paddingVertical:20}}>
-                <Text style={{color:"#fff"}}>Precipitation</Text>
-                <Text style={{color:"#fff"}}>-</Text>
-              </View>
-              <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',borderBottomStyle:"solid",borderBottomWidth:1,borderBottomColor:"#fff",paddingVertical:20}}>
-                <Text style={{color:"#fff"}}>Probability of precipitation</Text>
-                <Text style={{color:"#fff"}}>-</Text>
-              </View>
-              <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',borderBottomStyle:"solid",borderBottomWidth:1,borderBottomColor:"#fff",paddingVertical:20}}>
-                <Text style={{color:"#fff"}}>Wind</Text>
-                <Text style={{color:"#fff"}}>
-                  {dailyDatas?.wind_speed}m/s {compassSector[(dailyDatas?.wind_deg / 22.5).toFixed(0)]}
-                  {` `}<FontAwesome6 name="location-arrow" size={18} color="#aaa" style={{transform: [{rotate: `${dailyDatas?.wind_deg}deg`}]}}/>
-                </Text>
-              </View>
-              <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',borderBottomStyle:"solid",borderBottomWidth:1,borderBottomColor:"#fff",paddingVertical:20}}>
-                <Text style={{color:"#fff"}}>Pressure</Text>
-                <Text style={{color:"#fff"}}>{dailyDatas?.pressure}</Text>
-              </View>
-              <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',borderBottomStyle:"solid",borderBottomWidth:1,borderBottomColor:"#fff",paddingVertical:20}}>
-                <Text style={{color:"#fff"}}>Humidity</Text>
-                <Text style={{color:"#fff"}}>{dailyDatas?.humidity}</Text>
-              </View>
-              <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',borderBottomStyle:"solid",borderBottomWidth:1,borderBottomColor:"#fff",paddingVertical:20}}>
-                <Text style={{color:"#fff"}}>UV index</Text>
-                <Text style={{color:"#fff"}}>{dailyDatas?.uvi}</Text>
-              </View>
-              <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',borderBottomStyle:"solid",borderBottomWidth:1,borderBottomColor:"#fff",paddingVertical:20}}>
-                <Text style={{color:"#fff"}}>Sunrise</Text>
-                <Text style={{color:"#fff"}}>{splitDate(dailyDatas?.sunrise).hours}:{splitDate(dailyDatas?.sunrise).minutes}</Text>
-              </View>
-              <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',paddingVertical:20}}>
-                <Text style={{color:"#fff"}}>Sunset</Text>
-                <Text style={{color:"#fff"}}>{splitDate(dailyDatas?.sunset).hours}:{splitDate(dailyDatas?.sunrise).minutes}</Text>
-              </View>
-            </View>
+            <CurrentDailyStats dailyDatas={dailyDatas}/>
           </View>
           :
           currentDatas?.daily.map((item)=>(
