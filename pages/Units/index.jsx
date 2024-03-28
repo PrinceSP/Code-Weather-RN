@@ -14,29 +14,34 @@ const Units = ({navigation}) => {
   const [temperature,setTemperature] = useState([
     {
       isActive:true,
-      type:"metrics",
+      type:"metric",
+      label:"temperature",
       name:"˚C"
     },
     {
       isActive:false,
       type:"imperial",
+      label:"temperature",
       name:"˚F"
     }
   ])
   const [windSpeed,setWindSpeed] = useState([
     {
       isActive:true,
-      type:"m/s",
+      type:"metric",
+      label:"windSpeed",
       name:"m/s"
     },
     {
       isActive:false,
-      type:"km/h",
+      type:"metric",
+      label:"windSpeed",
       name:"km/h"
     },
     {
       isActive:false,
-      type:"mph",
+      type:"imperial",
+      label:"windSpeed",
       name:"mph"
     }
   ])
@@ -44,11 +49,13 @@ const Units = ({navigation}) => {
     {
       isActive:true,
       type:"hPa",
+      label:"pressure",
       name:"hPa"
     },
     {
       isActive:false,
       type:"inHg",
+      label:"pressure",
       name:"inHg"
     }
   ])
@@ -56,11 +63,13 @@ const Units = ({navigation}) => {
     {
       isActive:true,
       type:"mm",
+      label:"precipitation",
       name:"mm"
     },
     {
       isActive:false,
       type:"in",
+      label:"precipitation",
       name:"in"
     }
   ])
@@ -68,11 +77,13 @@ const Units = ({navigation}) => {
     {
       isActive:true,
       type:"km",
+      label:"distance",
       name:"km"
     },
     {
       isActive:false,
       type:"mi",
+      label:"distance",
       name:"mi"
     }
   ])
@@ -80,15 +91,17 @@ const Units = ({navigation}) => {
     {
       isActive:true,
       type:"24h",
+      label:"timeFormat",
       name:"24-hour"
     },
     {
       isActive:false,
       type:"12h",
+      label:"timeFormat",
       name:"12-hour"
     }
   ])
-  
+
   return (
     <SafeAreaView style={[styles.container,{paddingTop: insets.top}]}>
       <Header navigation={navigation} title="Units"/>
