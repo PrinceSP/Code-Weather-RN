@@ -3,9 +3,10 @@ import {View,Text,Modal,StyleSheet,Image,KeyboardAvoidingView,Platform,Pressable
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FontAwesome6,AntDesign,Octicons } from '@expo/vector-icons';
 import {LineChart} from "react-native-chart-kit";
-import {useGetData} from '../../custom-hooks'
 import {ONECALL_API,GEOLOCATION_API, API_KEY} from "@env"
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSelector } from 'react-redux';
+import {useGetData} from '../../custom-hooks'
 
 const {width,height,fontScale} = Dimensions.get('window')
 
@@ -52,7 +53,7 @@ const chartConfig = {
   withDots:false
 };
 
-const HourlyWeather = memo(({ item })=>{
+const HourlyWeather = memo(({ item,unit })=>{
   const unixTime = item.dt;
   const exactDate = new Date(unixTime * 1000);
   const time = exactDate.getHours().toString().padStart(2, '0') + ":" + exactDate.getMinutes().toString().padStart(2, '0');
@@ -61,7 +62,7 @@ const HourlyWeather = memo(({ item })=>{
     <View key={item.dt} style={{ alignItems: 'center', justifyContent: 'space-between', paddingVertical: 2, marginVertical: 20, marginRight: 10 }}>
       <Text style={{ color: "#505050" }}>{time}</Text>
       <Image source={{ uri: `https://openweathermap.org/img/wn/${item.weather[0].icon}.png` }} style={{ width: 35, height: 35 }} />
-      <Text style={{ color: "#fff" }}>{item.temp.toFixed(0)}˚F</Text>
+      <Text style={{ color: "#fff" }}>{item.temp.toFixed(0)}{unit}</Text>
     </View>
   );
 });
@@ -81,7 +82,7 @@ async function getStorageData(){
 }
 
 const Home = ({navigation})=>{
-  const locationDatas = useGetData(`${process.env.GEOLOCATION_API}?q=${searchQuery}&limit=10&appid=${process.env.API_KEY}`)
+  const unitDatas = useSelector(state => state.units);
   const [modalVisible,setModalVisible] = useState(false)
   const [searchQuery,setQuery] = useState("")
   const [dailyStats,setDailyStats] = useState(false)
@@ -90,10 +91,12 @@ const Home = ({navigation})=>{
     lon:null,
     place:null
   })
-  const currentDatas = useGetData(`${process.env.ONECALL_API}?lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${process.env.API_KEY}&units=metric`)
   const [dailyDatas,setDailyDatas] = useState(currentDatas?.daily)
-  const insets = useSafeAreaInsets()
+  const currentDatas = useGetData(`${process.env.ONECALL_API}?lat=${coordinates.lat}&lon=${coordinates.lon}&units=${unitDatas.temperature}&speed=${unitDatas.windSpeed}&pressure=${unitDatas.pressure}&appid=${process.env.API_KEY}`)
+  const locationDatas = useGetData(`${process.env.GEOLOCATION_API}?q=${searchQuery}&limit=10&appid=${process.env.API_KEY}`)
+  console.log(searchQuery);
 
+  const insets = useSafeAreaInsets()
   const data = {
     labels: ["January", "February", "March", "April", "May", "June"],
     datasets: [
@@ -213,8 +216,8 @@ const Home = ({navigation})=>{
               <Text style={{color:"#505050"}}>{currentDatas?.current?.weather[0]?.description}</Text>
             </View>
           </View>
-          <Text style={{fontSize:80/fontScale,color:"#fff"}}>{currentDatas?.current?.temp.toFixed(0)}˚C</Text>
-          <Text style={{color:"#505050"}}>Feels like {currentDatas?.current?.feels_like.toFixed(0)}˚C</Text>
+          <Text style={{fontSize:80/fontScale,color:"#fff"}}>{currentDatas?.current?.temp.toFixed(0)}{unitDatas.temperature==="metric" ? "˚C" : "˚F"}</Text>
+          <Text style={{color:"#505050"}}>Feels like {currentDatas?.current?.feels_like.toFixed(0)}{unitDatas.temperature==="metric" ? "˚C" : "˚F"}</Text>
         </View>
 
         <View style={{width,alignItems:'center',marginTop:50}}>
@@ -242,12 +245,12 @@ const Home = ({navigation})=>{
           <Text style={{marginBottom:20,color:"#fff",fontSize:15/fontScale,}}>UV index: {currentDatas?.current?.uvi}</Text>
           <Text style={{marginBottom:20,color:"#fff",fontSize:15/fontScale,}}>Pressure: {currentDatas?.current?.pressure}hPa</Text>
           <Text style={{marginBottom:20,color:"#fff",fontSize:15/fontScale,}}>Visibility: {currentDatas?.current?.visibility}km</Text>
-          <Text style={{marginBottom:20,color:"#fff",fontSize:15/fontScale,}}>Dew point: {currentDatas?.current?.dew_point}˚C</Text>
+          <Text style={{marginBottom:20,color:"#fff",fontSize:15/fontScale,}}>Dew point: {currentDatas?.current?.dew_point}{unitDatas.temperature==="metric" ? "˚C" : "˚F"}</Text>
         </View>
 
         <FlatList
           data={currentDatas?.hourly}
-          renderItem={({item})=><HourlyWeather item={item}/>}
+          renderItem={({item})=><HourlyWeather item={item} unit={unitDatas.temperature==="metric" ? "˚C" : "˚F"}/>}
           keyExtractor={(item) => item.dt.toString()}
           horizontal
           maxToRenderPerBatch={7}
@@ -276,7 +279,7 @@ const Home = ({navigation})=>{
                 <Text style={{color:"#babeb4",fontSize:14/fontScale}}>{dailyDatas.weather[0].description}</Text>
               </View>
               <View style={{flexDirection:'row',alignItems:'center'}}>
-                <Text style={{color:"#fff",fontSize:16/fontScale}}>{dailyDatas.temp.max.toFixed(0)} / {dailyDatas.temp.min.toFixed(0)} ˚F</Text>
+                <Text style={{color:"#fff",fontSize:16/fontScale}}>{dailyDatas.temp.max.toFixed(0)} / {dailyDatas.temp.min.toFixed(0)} {unitDatas.temperature==="metric" ? "˚C" : "˚F"}</Text>
                 <Image source={{ uri: `https://openweathermap.org/img/wn/${dailyDatas.weather[0].icon}.png` }} style={{ width: 38, height: 38, marginLeft:5,marginRight:10 }} />
               </View>
             </View>
@@ -337,7 +340,7 @@ const Home = ({navigation})=>{
             }}>
               <Text style={{color:"#fff",fontSize:16/fontScale}}>{splitDate(item.dt).dayMonth}</Text>
               <View style={{flexDirection:'row',alignItems:'center'}}>
-                <Text style={{color:"#fff",fontSize:16/fontScale}}>{item.temp.max.toFixed(0)} / {item.temp.min.toFixed(0)} ˚F</Text>
+                <Text style={{color:"#fff",fontSize:16/fontScale}}>{item.temp.max.toFixed(0)} / {item.temp.min.toFixed(0)} {unitDatas.temperature==="metric" ? "˚C" : "˚F"}</Text>
                 <Image source={{ uri: `https://openweathermap.org/img/wn/${item.weather[0].icon}.png` }} style={{ width: 38, height: 38, marginLeft:5,marginRight:10 }} />
                 <Octicons name="chevron-right" size={24} color="#888"/>
               </View>
