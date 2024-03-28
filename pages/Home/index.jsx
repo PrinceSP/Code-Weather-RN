@@ -81,16 +81,18 @@ async function getStorageData(){
 }
 
 const Home = ({navigation})=>{
+  const locationDatas = useGetData(`${process.env.GEOLOCATION_API}?q=${searchQuery}&limit=10&appid=${process.env.API_KEY}`)
   const [modalVisible,setModalVisible] = useState(false)
   const [searchQuery,setQuery] = useState("")
+  const [dailyStats,setDailyStats] = useState(false)
   const [coordinates,setCoordinates] = useState({
     lat:null,
     lon:null,
     place:null
   })
-  const insets = useSafeAreaInsets()
   const currentDatas = useGetData(`${process.env.ONECALL_API}?lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${process.env.API_KEY}&units=metric`)
-  const locationDatas = useGetData(`${process.env.GEOLOCATION_API}?q=${searchQuery}&limit=10&appid=${process.env.API_KEY}`)
+  const [dailyDatas,setDailyDatas] = useState(currentDatas?.daily)
+  const insets = useSafeAreaInsets()
 
   const data = {
     labels: ["January", "February", "March", "April", "May", "June"],
@@ -103,12 +105,22 @@ const Home = ({navigation})=>{
     ],
   };
 
+  const daily={
+    labels:currentDatas?.daily.map(item=>splitDate(item.dt).hours+":"+splitDate(item.dt).minutes),
+    datasets:[{data:currentDatas?.daily.map(item=>item.temp.day.toFixed(0))}]
+  }
+
   const compassSector = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW", "N"];
 
   function splitDate(unixTime){
     const exactDate = new Date(unixTime * 1000);
-    const result = exactDate.toDateString().split(" ").slice(0,-1).join(" ")
-    return result
+    const dayMonth = exactDate.toDateString().split(" ").slice(0,-1).join(" ")
+    const dayDate = exactDate.toDateString().split(" ").slice(0,1).join(" ")
+    const date = exactDate.toDateString().split(" ").slice(2,3).join(" ")
+    const hours = exactDate.getHours()
+    const minutes = exactDate.getMinutes()
+
+    return {dayMonth,dayDate,date,hours,minutes}
   }
 
   const setLocationCoor = async (item) => {
@@ -241,10 +253,89 @@ const Home = ({navigation})=>{
           maxToRenderPerBatch={7}
         />
 
-        {
+        { dailyStats===true ?
+          <View style={{marginBottom:20,marginHorizontal:7}}>
+            <View style={{marginBottom:10,paddingBottom:10,flexDirection:"row",alignItems:'center',justifyContent:'space-between',borderBottomColor:"#fff",borderBottomWidth:1,borderBottomStyle:"solid"}}>
+              <View style={{flexDirection:'row'}}>
+                {currentDatas?.daily.map((item,index)=>(
+                  <TouchableOpacity
+                    key={item.dt}
+                    style={{alignItems:'center',paddingHorizontal:4,paddingVertical:6,backgroundColor:item.dt===dailyDatas.dt ? "#47484988" :  "#0000",borderRadius:6,width:37,margin:0}}
+                    onPress={()=>setDailyDatas(item)}
+                    >
+                    <Text style={{color:"#777",fontSize:13/fontScale}}>{splitDate(item.dt).dayDate}</Text>
+                    <Text style={{color:item.dt===dailyDatas.dt ? "#fff" : "#777",fontSize:13/fontScale}}>{splitDate(item.dt).date}</Text>
+                  </TouchableOpacity>)
+                )}
+              </View>
+              <FontAwesome6 name="list" size={18} color="#fff" onPress={()=>setDailyStats(false)}/>
+            </View>
+            <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',marginTop:10,marginBottom:25}}>
+              <View>
+                <Text style={{color:"#fff",fontSize:16/fontScale,fontWeight:"800"}}>{dailyDatas.weather[0].main}</Text>
+                <Text style={{color:"#babeb4",fontSize:14/fontScale}}>{dailyDatas.weather[0].description}</Text>
+              </View>
+              <View style={{flexDirection:'row',alignItems:'center'}}>
+                <Text style={{color:"#fff",fontSize:16/fontScale}}>{dailyDatas.temp.max.toFixed(0)} / {dailyDatas.temp.min.toFixed(0)} ˚F</Text>
+                <Image source={{ uri: `https://openweathermap.org/img/wn/${dailyDatas.weather[0].icon}.png` }} style={{ width: 38, height: 38, marginLeft:5,marginRight:10 }} />
+              </View>
+            </View>
+            <LineChart
+              yAxisSuffix="mm"
+              style={{fontSize:8/fontScale}}
+              data={daily}
+              width={width}
+              height={160}
+              fromZero={true}
+              withVerticalLabels={true}
+              chartConfig={chartConfig}
+              bezier
+            />
+            <View style={{marginTop:20}}>
+              <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',borderBottomStyle:"solid",borderBottomWidth:1,borderBottomColor:"#fff",paddingVertical:20}}>
+                <Text style={{color:"#fff"}}>Precipitation</Text>
+                <Text style={{color:"#fff"}}>-</Text>
+              </View>
+              <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',borderBottomStyle:"solid",borderBottomWidth:1,borderBottomColor:"#fff",paddingVertical:20}}>
+                <Text style={{color:"#fff"}}>Probability of precipitation</Text>
+                <Text style={{color:"#fff"}}>-</Text>
+              </View>
+              <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',borderBottomStyle:"solid",borderBottomWidth:1,borderBottomColor:"#fff",paddingVertical:20}}>
+                <Text style={{color:"#fff"}}>Wind</Text>
+                <Text style={{color:"#fff"}}>
+                  {dailyDatas?.wind_speed}m/s {compassSector[(dailyDatas?.wind_deg / 22.5).toFixed(0)]}
+                  {` `}<FontAwesome6 name="location-arrow" size={18} color="#aaa" style={{transform: [{rotate: `${dailyDatas?.wind_deg}deg`}]}}/>
+                </Text>
+              </View>
+              <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',borderBottomStyle:"solid",borderBottomWidth:1,borderBottomColor:"#fff",paddingVertical:20}}>
+                <Text style={{color:"#fff"}}>Pressure</Text>
+                <Text style={{color:"#fff"}}>{dailyDatas?.pressure}</Text>
+              </View>
+              <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',borderBottomStyle:"solid",borderBottomWidth:1,borderBottomColor:"#fff",paddingVertical:20}}>
+                <Text style={{color:"#fff"}}>Humidity</Text>
+                <Text style={{color:"#fff"}}>{dailyDatas?.humidity}</Text>
+              </View>
+              <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',borderBottomStyle:"solid",borderBottomWidth:1,borderBottomColor:"#fff",paddingVertical:20}}>
+                <Text style={{color:"#fff"}}>UV index</Text>
+                <Text style={{color:"#fff"}}>{dailyDatas?.uvi}</Text>
+              </View>
+              <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',borderBottomStyle:"solid",borderBottomWidth:1,borderBottomColor:"#fff",paddingVertical:20}}>
+                <Text style={{color:"#fff"}}>Sunrise</Text>
+                <Text style={{color:"#fff"}}>{splitDate(dailyDatas?.sunrise).hours}:{splitDate(dailyDatas?.sunrise).minutes}</Text>
+              </View>
+              <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',paddingVertical:20}}>
+                <Text style={{color:"#fff"}}>Sunset</Text>
+                <Text style={{color:"#fff"}}>{splitDate(dailyDatas?.sunset).hours}:{splitDate(dailyDatas?.sunrise).minutes}</Text>
+              </View>
+            </View>
+          </View>
+          :
           currentDatas?.daily.map((item)=>(
-            <TouchableOpacity key={item.dt} style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',borderBottomStyle:"solid",borderBottomWidth:1,borderBottomColor:"#fff",paddingVertical:10}}>
-              <Text style={{color:"#fff",fontSize:16/fontScale}}>{splitDate(item.dt)}</Text>
+            <TouchableOpacity key={item.dt} style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',borderBottomStyle:"solid",borderBottomWidth:1,borderBottomColor:"#fff",paddingVertical:10}} onPress={()=>{
+              setDailyStats(true)
+              setDailyDatas(item)
+            }}>
+              <Text style={{color:"#fff",fontSize:16/fontScale}}>{splitDate(item.dt).dayMonth}</Text>
               <View style={{flexDirection:'row',alignItems:'center'}}>
                 <Text style={{color:"#fff",fontSize:16/fontScale}}>{item.temp.max.toFixed(0)} / {item.temp.min.toFixed(0)} ˚F</Text>
                 <Image source={{ uri: `https://openweathermap.org/img/wn/${item.weather[0].icon}.png` }} style={{ width: 38, height: 38, marginLeft:5,marginRight:10 }} />
@@ -253,7 +344,6 @@ const Home = ({navigation})=>{
             </TouchableOpacity>
           ))
         }
-
       </ScrollView>
     </SafeAreaView>
   )
