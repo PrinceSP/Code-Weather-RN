@@ -1,12 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  temperature: '',
-  windSpeed: '',
-  pressure: '',
-  precipitation: '',
-  distance: '',
-  timeFormat: '',
+  temperature: 'metric',
+  windSpeed: 'metric',
+  pressure: 'metric',
+  precipitation: 'metric',
+  distance: 'metric',
+  timeFormat: 'metric',
 };
 
 const unitsSlice = createSlice({
