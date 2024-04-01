@@ -6,7 +6,7 @@ const initialState = {
   pressure: 'metric',
   precipitation: 'metric',
   distance: 'metric',
-  timeFormat: 'metric',
+  timeFormat: 'metric'
 };
 
 const unitsSlice = createSlice({
