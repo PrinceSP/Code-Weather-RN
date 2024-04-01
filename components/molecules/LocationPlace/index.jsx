@@ -2,9 +2,11 @@ import React, { useState, useCallback } from "react";
 import { StyleSheet, Image, View, Text, TouchableOpacity } from "react-native";
 import { FontAwesome6 } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useDispatch } from 'react-redux';
+import { getCoords } from '../../../store/currentCoordinates';
 
-const LocationPlace = ({ item, toggleModalVisible, updateCoordinates }) => {
-  const [coordinates, setCoordinates] = useState({...item});
+const LocationPlace = ({ item, toggleModalVisible }) => {
+  const dispatch = useDispatch()
 
   const setLocationCoor = async (item) => {
     const newCoordinates = {
@@ -12,12 +14,12 @@ const LocationPlace = ({ item, toggleModalVisible, updateCoordinates }) => {
       lon: item.lon,
       place: item.name + ", " + item.state
     };
-    setCoordinates(newCoordinates);
+    const {lat,lon,place} = newCoordinates
     const jsonValue = JSON.stringify(newCoordinates);
     try {
       await AsyncStorage.setItem('location', jsonValue);
+      dispatch(getCoords({lat,lon,places:place}))
       toggleModalVisible();
-      updateCoordinates(newCoordinates);
     } catch (e) {
       return e
     }
