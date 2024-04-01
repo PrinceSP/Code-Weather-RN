@@ -3,12 +3,13 @@ import {View,Text,Modal,StyleSheet,Image,KeyboardAvoidingView,Platform,Pressable
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FontAwesome6,AntDesign,Octicons } from '@expo/vector-icons';
 import {LineChart} from "react-native-chart-kit";
-import { useSelector } from 'react-redux';
+import { useSelector,useDispatch } from 'react-redux';
 import {ONECALL_API,GEOLOCATION_API, API_KEY} from "@env"
 import {useGetData} from '../../custom-hooks'
 import {splitDate,dailyChartdata,getStorageData} from '../../functions'
 import {data,compassSector,chartConfig} from '../../configs'
-import {HourlyWeather,LocationPlace,SearchHeader,CurrentTemperature,CurrentTempStats,PrecipitationGraph} from '../../components'
+import {HourlyWeather,LocationPlace,SearchHeader,CurrentTemperature,CurrentTempStats,PrecipitationGraph,FindLocation} from '../../components'
+import { getCoords } from '../../store/currentCoordinates';
 
 const {width,height,fontScale} = Dimensions.get('window')
 
@@ -21,55 +22,24 @@ const styles = StyleSheet.create({
     width,
     paddingHorizontal: 17,
     backgroundColor: "#121415"
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor:"121415",
-  },
-  modalView: {
-    width,
-    height,
-    backgroundColor: '#121415',
-    borderRadius: 4,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
   }
 });
 
 const Home = ({navigation})=>{
+  const dispatch = useDispatch()
   const unitDatas = useSelector(state => state.units);
-  const [modalVisible,setModalVisible] = useState(false)
-  const [searchQuery,setQuery] = useState("")
+  const coordDatas = useSelector(state => state.coords);
   const [dailyStats,setDailyStats] = useState(false)
   const [coordinates,setCoordinates] = useState({
-    lat:null,
-    lon:null,
-    place:null
+    lat:coordDatas.lat,
+    lon:coordDatas.lon,
+    place:coordDatas.place
   })
-  const [dailyDatas,setDailyDatas] = useState(currentDatas?.daily)
   const currentDatas = useGetData(`${process.env.ONECALL_API}?lat=${coordinates.lat}&lon=${coordinates.lon}&units=${unitDatas.temperature}&speed=${unitDatas.windSpeed}&pressure=${unitDatas.pressure}&appid=${process.env.API_KEY}`)
-  const locationDatas = useGetData(`${process.env.GEOLOCATION_API}?q=${searchQuery}&limit=10&appid=${process.env.API_KEY}`)
+  const [dailyDatas,setDailyDatas] = useState(currentDatas?.daily)
   const insets = useSafeAreaInsets()
-
-  const toggleModalVisible = () => {
-    setModalVisible(false);
-  };
-
-  const updateCoordinates = (newCoordinates) => {
-    setCoordinates(newCoordinates);
-  };
-
-  useEffect(() => {
-    const fetchToken = async () => {
+  const fetchToken = async () => {
+    try {
       const token = await getStorageData();
       if (token) {
         setCoordinates({
@@ -78,44 +48,30 @@ const Home = ({navigation})=>{
           place: token.place,
         });
       }
-    };
+    } catch (e) {
+      return e
+    }
 
+  };
+
+  useEffect(() => {
     fetchToken();
   }, []);
 
+  useEffect(() => {
+    setCoordinates({
+      lat: coordDatas.lat,
+      lon: coordDatas.lon,
+      place: coordDatas.places
+    });
+  }, [coordDatas]);
+
   return(
     <SafeAreaView style={[styles.container,{paddingTop: insets.top}]}>
-      <Modal
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}>
-        <View style={styles.centeredView}>
-          <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : null}
-            keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}
-          >
-            <ScrollView contentContainerStyle={styles.modalView}>
-              <SearchHeader updateModal={toggleModalVisible} updateQuery={(newQuery)=>setQuery(newQuery)}/>
-              {
-                locationDatas?.length > 0 ? locationDatas?.map((item,index) =>
-                <LocationPlace
-                  key={index}
-                  toggleModalVisible={toggleModalVisible}
-                  item={item}
-                  updateCoordinates={updateCoordinates}
-                />)
-                :null
-              }
-            </ScrollView>
-          </KeyboardAvoidingView>
-        </View>
-      </Modal>
       <View style={styles.header}>
-        <TouchableOpacity style={{flexDirection:'row',alignItems:'center'}} onPress={()=>setModalVisible(true)}>
+        <TouchableOpacity style={{flexDirection:'row',alignItems:'center'}} onPress={()=>navigation.navigate("SearchLocation")}>
           <AntDesign name="search1" size={24} color="#fff" />
-          <Text style={{color:"#fff",marginLeft:2,fontSize:22/fontScale}}>{coordinates.place}</Text>
+          <Text style={{color:"#fff",marginLeft:2,fontSize:22/fontScale}}>{coordinates?.place}</Text>
         </TouchableOpacity>
         <FontAwesome6 name="sliders" size={24} color="#fff" onPress={()=>navigation.navigate("Settings")}/>
       </View>
@@ -172,7 +128,7 @@ const Home = ({navigation})=>{
             <CurrentDailyStats dailyDatas={dailyDatas}/>
           </View>
           :
-          currentDatas?.daily.map((item)=>(
+          (currentDatas?.daily?.length > 0  ? currentDatas?.daily.map((item)=>(
             <TouchableOpacity key={item.dt} style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',borderBottomStyle:"solid",borderBottomWidth:1,borderBottomColor:"#fff",paddingVertical:10}} onPress={()=>{
               setDailyStats(true)
               setDailyDatas(item)
@@ -184,7 +140,7 @@ const Home = ({navigation})=>{
                 <Octicons name="chevron-right" size={24} color="#888"/>
               </View>
             </TouchableOpacity>
-          ))
+          )) : null)
         }
       </ScrollView>
     </SafeAreaView>
