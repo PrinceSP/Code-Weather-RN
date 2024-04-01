@@ -1,7 +1,7 @@
 import React, { useState,useEffect,useCallback } from 'react';
 import { Easing } from 'react-native';
 import { createNativeStackNavigator,TransitionPreset,CardStyleInterpolators } from '@react-navigation/native-stack';
-import {Home,Settings,DifferentWeather,Units} from "../pages"
+import {Home,Settings,DifferentWeather,Units,SearchLocation} from "../pages"
 
 const Stack = createNativeStackNavigator();
 
@@ -47,6 +47,7 @@ const Router = () => {
       <Stack.Screen name='Settings' component={Settings}></Stack.Screen>
       <Stack.Screen name='DifferentWeather' component={DifferentWeather}></Stack.Screen>
       <Stack.Screen name='Units' component={Units}></Stack.Screen>
+      <Stack.Screen name='SearchLocation' component={SearchLocation}></Stack.Screen>
 
         {/* You can add you screen here */}
     </Stack.Navigator>
