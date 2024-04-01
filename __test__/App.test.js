@@ -1,3 +1,4 @@
+jest.useFakeTimers();
 import 'react-native-gesture-handler';
 import React from 'react';
 import renderer from 'react-test-renderer';
