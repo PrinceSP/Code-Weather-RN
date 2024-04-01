@@ -9,5 +9,6 @@ import CurrentTempStats from './CurrentTempStats'
 import CurrentDailyStats from './CurrentDailyStats'
 import PrecipitationGraph from './PrecipitationGraph'
 import SettingMenu from './SettingMenus'
+import FindLocation from './FindLocation'
 
-export {Header,CustomUnits,Checkbox,HourlyWeather,LocationPlace,SearchHeader,CurrentTemperature,CurrentTempStats,CurrentDailyStats,PrecipitationGraph,SettingMenu}
+export {Header,CustomUnits,Checkbox,HourlyWeather,LocationPlace,SearchHeader,CurrentTemperature,CurrentTempStats,CurrentDailyStats,PrecipitationGraph,SettingMenu,FindLocation}
