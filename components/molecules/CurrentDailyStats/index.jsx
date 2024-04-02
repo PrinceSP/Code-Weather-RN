@@ -1,6 +1,7 @@
 import React from 'react'
 import {View,Text,StyleSheet,Dimensions} from 'react-native'
 import {splitDate} from '../../../functions'
+import {compassSector} from '../../../configs'
 import { FontAwesome6 } from '@expo/vector-icons';
 
 const CurrentDailyStats = ({dailyDatas}) => {
