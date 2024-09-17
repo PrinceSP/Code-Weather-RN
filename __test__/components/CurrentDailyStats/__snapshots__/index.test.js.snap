@@ -1,0 +1,557 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Current Daily Status Component renders correctly with weather datas 1`] = `
+<View
+  style={
+    {
+      "marginTop": 20,
+    }
+  }
+>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "borderBottomColor": "#fff",
+        "borderBottomStyle": "solid",
+        "borderBottomWidth": 1,
+        "flexDirection": "row",
+        "justifyContent": "space-between",
+        "paddingVertical": 20,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    >
+      Precipitation
+    </Text>
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    >
+      -
+    </Text>
+  </View>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "borderBottomColor": "#fff",
+        "borderBottomStyle": "solid",
+        "borderBottomWidth": 1,
+        "flexDirection": "row",
+        "justifyContent": "space-between",
+        "paddingVertical": 20,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    >
+      Probability of precipitation
+    </Text>
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    >
+      -
+    </Text>
+  </View>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "borderBottomColor": "#fff",
+        "borderBottomStyle": "solid",
+        "borderBottomWidth": 1,
+        "flexDirection": "row",
+        "justifyContent": "space-between",
+        "paddingVertical": 20,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    >
+      Wind
+    </Text>
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    >
+      m/s 
+       
+      <Text />
+    </Text>
+  </View>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "borderBottomColor": "#fff",
+        "borderBottomStyle": "solid",
+        "borderBottomWidth": 1,
+        "flexDirection": "row",
+        "justifyContent": "space-between",
+        "paddingVertical": 20,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    >
+      Pressure
+    </Text>
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    />
+  </View>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "borderBottomColor": "#fff",
+        "borderBottomStyle": "solid",
+        "borderBottomWidth": 1,
+        "flexDirection": "row",
+        "justifyContent": "space-between",
+        "paddingVertical": 20,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    >
+      Humidity
+    </Text>
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    />
+  </View>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "borderBottomColor": "#fff",
+        "borderBottomStyle": "solid",
+        "borderBottomWidth": 1,
+        "flexDirection": "row",
+        "justifyContent": "space-between",
+        "paddingVertical": 20,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    >
+      UV index
+    </Text>
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    />
+  </View>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "borderBottomColor": "#fff",
+        "borderBottomStyle": "solid",
+        "borderBottomWidth": 1,
+        "flexDirection": "row",
+        "justifyContent": "space-between",
+        "paddingVertical": 20,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    >
+      Sunrise
+    </Text>
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    >
+      NaN
+      :
+      NaN
+    </Text>
+  </View>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "flexDirection": "row",
+        "justifyContent": "space-between",
+        "paddingVertical": 20,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    >
+      Sunset
+    </Text>
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    >
+      NaN
+      :
+      NaN
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`Current Daily Status Component renders correctly without weather datas 1`] = `
+<View
+  style={
+    {
+      "marginTop": 20,
+    }
+  }
+>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "borderBottomColor": "#fff",
+        "borderBottomStyle": "solid",
+        "borderBottomWidth": 1,
+        "flexDirection": "row",
+        "justifyContent": "space-between",
+        "paddingVertical": 20,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    >
+      Precipitation
+    </Text>
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    >
+      -
+    </Text>
+  </View>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "borderBottomColor": "#fff",
+        "borderBottomStyle": "solid",
+        "borderBottomWidth": 1,
+        "flexDirection": "row",
+        "justifyContent": "space-between",
+        "paddingVertical": 20,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    >
+      Probability of precipitation
+    </Text>
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    >
+      -
+    </Text>
+  </View>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "borderBottomColor": "#fff",
+        "borderBottomStyle": "solid",
+        "borderBottomWidth": 1,
+        "flexDirection": "row",
+        "justifyContent": "space-between",
+        "paddingVertical": 20,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    >
+      Wind
+    </Text>
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    >
+      m/s 
+       
+      <Text
+        allowFontScaling={false}
+        selectable={false}
+        style={
+          [
+            {
+              "color": "#aaa",
+              "fontSize": 18,
+            },
+            {
+              "transform": [
+                {
+                  "rotate": "undefineddeg",
+                },
+              ],
+            },
+            {
+              "fontFamily": "FontAwesome6Free-Solid",
+              "fontStyle": "normal",
+              "fontWeight": "normal",
+            },
+            {
+              "fontWeight": "900",
+            },
+          ]
+        }
+      >
+        
+      </Text>
+    </Text>
+  </View>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "borderBottomColor": "#fff",
+        "borderBottomStyle": "solid",
+        "borderBottomWidth": 1,
+        "flexDirection": "row",
+        "justifyContent": "space-between",
+        "paddingVertical": 20,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    >
+      Pressure
+    </Text>
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    />
+  </View>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "borderBottomColor": "#fff",
+        "borderBottomStyle": "solid",
+        "borderBottomWidth": 1,
+        "flexDirection": "row",
+        "justifyContent": "space-between",
+        "paddingVertical": 20,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    >
+      Humidity
+    </Text>
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    />
+  </View>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "borderBottomColor": "#fff",
+        "borderBottomStyle": "solid",
+        "borderBottomWidth": 1,
+        "flexDirection": "row",
+        "justifyContent": "space-between",
+        "paddingVertical": 20,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    >
+      UV index
+    </Text>
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    />
+  </View>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "borderBottomColor": "#fff",
+        "borderBottomStyle": "solid",
+        "borderBottomWidth": 1,
+        "flexDirection": "row",
+        "justifyContent": "space-between",
+        "paddingVertical": 20,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    >
+      Sunrise
+    </Text>
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    >
+      NaN
+      :
+      NaN
+    </Text>
+  </View>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "flexDirection": "row",
+        "justifyContent": "space-between",
+        "paddingVertical": 20,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    >
+      Sunset
+    </Text>
+    <Text
+      style={
+        {
+          "color": "#fff",
+        }
+      }
+    >
+      NaN
+      :
+      NaN
+    </Text>
+  </View>
+</View>
+`;

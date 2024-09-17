@@ -1,0 +1,85 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SearchHeader renders correctly 1`] = `
+<View
+  style={
+    {
+      "alignItems": "center",
+      "flexDirection": "row",
+      "justifyContent": "space-between",
+    }
+  }
+>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "backgroundColor": "#47484955",
+        "borderRadius": 20,
+        "flexDirection": "row",
+        "paddingHorizontal": 8,
+        "paddingVertical": 6,
+        "width": "90%",
+      }
+    }
+  >
+    <Text />
+    <TextInput
+      defaultValue=""
+      onChangeText={[Function]}
+      placeholder="Search"
+      placeholderTextColor="#aaa"
+      style={
+        {
+          "color": "#fff",
+          "fontSize": 9,
+          "marginLeft": 10,
+          "width": "90%",
+        }
+      }
+    />
+  </View>
+  <View
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+  >
+    <Text
+      style={
+        {
+          "color": "#fff",
+          "fontSize": 18,
+        }
+      }
+    >
+      X
+    </Text>
+  </View>
+</View>
+`;
