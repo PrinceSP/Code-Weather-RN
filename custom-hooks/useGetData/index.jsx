@@ -1,24 +1,23 @@
-import React, {useState,useEffect} from 'react'
+import React, { useState, useEffect, useCallback } from 'react';
 
-const useGetData = (url)=>{
-  const [datas,setDatas] = useState(null)
+const useGetData = (url) => {
+  const [datas, setDatas] = useState(null);
 
-  useEffect(()=>{
-    let ignore = false
+  const fetchData = useCallback(() => {
     fetch(url)
-    .then(res=>res.json())
-    .then(data=>{
-      if (!ignore) {
-        setDatas(data)
-      }
-    })
-    .catch(error=>error)
-    return ()=>{
-      ignore = true
-    }
-  },[url])
+      .then((res) => res.json())
+      .then((response) => {
+        setDatas(response);
+      })
+      .catch((error) => error);
+  }, [url]);
 
-  return datas
-}
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
-export default useGetData
+
+  return datas;
+};
+
+export default useGetData;
